@@ -11,6 +11,8 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
       - name: Generate build files
         uses: thatisuday/go-cross-build@v1
         with:
