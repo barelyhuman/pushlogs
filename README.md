@@ -7,7 +7,7 @@
 
 ### Motivation
 
-Well, I log my workouts it my brain and as expected, I forget what my max rep was when I last worked out, so this.
+Well, I log my workouts in my brain and as expected, I forget what my max rep was when I last worked out, so this.
 
 ### Contribution
 
