@@ -6,26 +6,24 @@ on:
       - master
 
 jobs:
-  pre-release:
-    name: "Pre Release"
-    runs-on: "ubuntu-latest"
-
-    steps:
-     - name: Checkout the repository
-        uses: actions/checkout@v2
-      - name: Generate build files
-        uses: thatisuday/go-cross-build@v1
-        with:
+    pre-release:
+      name: Pre Release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout the repository
+          uses: actions/checkout@v2
+        - name: Generate build files
+          uses: thatisuday/go-cross-build@v1
+          with:
             platforms: 'linux/amd64, windows/amd64, darwin/amd64'
             package: ''
-            name: 'pushlogs'
+            name: pushlogs
             compress: 'true'
-            dest: 'dist'
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: dist/*
+            dest: dist
+        - uses: marvinpinto/action-automatic-releases@latest
+          with:
+            repo_token: '${{ secrets.GITHUB_TOKEN }}'
+            automatic_release_tag: latest
+            prerelease: true
+            title: Nightly Build
+            files: dist/*
