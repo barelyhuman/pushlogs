@@ -1,0 +1,29 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+    pre-release:
+      name: Pre Release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout the repository
+          uses: actions/checkout@v2
+        - name: Generate build files
+          uses: thatisuday/go-cross-build@v1
+          with:
+            platforms: 'linux/amd64, windows/amd64, darwin/amd64'
+            package: ''
+            name: pushlogs
+            compress: 'true'
+            dest: dist
+        - uses: marvinpinto/action-automatic-releases@latest
+          with:
+            repo_token: '${{ secrets.GITHUB_TOKEN }}'
+            automatic_release_tag: nightly-'${{TIMESTAMP}}'
+            prerelease: true
+            title: Nightly Build - '${{TIMESTAMP}}'
+            files: dist/*
+          env:
+            TIMESTAMP: ${{ date "+%Y-%m-%d" }}
