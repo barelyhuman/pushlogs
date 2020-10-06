@@ -21,7 +21,9 @@ jobs:
         - uses: marvinpinto/action-automatic-releases@latest
           with:
             repo_token: '${{ secrets.GITHUB_TOKEN }}'
-            automatic_release_tag: latest
+            automatic_release_tag: nightly-'${{TIMESTAMP}}'
             prerelease: true
-            title: Nightly Build
+            title: Nightly Build - '${{TIMESTAMP}}'
             files: dist/*
+          env:
+            TIMESTAMP: ${{ date "+%Y-%m-%d" }}
