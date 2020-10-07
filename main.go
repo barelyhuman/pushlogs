@@ -7,8 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 )
+
+type pushLog struct {
+	exerciseName string
+	reps         string
+}
 
 func userHomeDir() string {
 	env := "HOME"
@@ -22,23 +28,36 @@ func userHomeDir() string {
 
 func main() {
 
+	var inputLogs []pushLog
+
 	// Base Directory Creation
 	baseDir := filepath.Join(userHomeDir(), "pushlogs")
 	_ = os.MkdirAll(baseDir, os.ModePerm)
 
 	// Reader for Inputs
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter Exercises: ")
-	exercises, _ := reader.ReadString('\n')
-	fmt.Print("Enter Reps: ")
-	reps, _ := reader.ReadString('\n')
+
+	for {
+		fmt.Print("Enter Exercises: ")
+		exercise, _ := reader.ReadString('\n')
+		exercise = strings.TrimSuffix(exercise, "\n")
+		fmt.Print("Enter Reps: ")
+		rep, _ := reader.ReadString('\n')
+		fmt.Print("Add More?(n for no, anything else for yes): ")
+		answer, _ := reader.ReadString('\n')
+		answer = strings.TrimSuffix(answer, "\n")
+		inputLogs = append(inputLogs, pushLog{exerciseName: exercise, reps: rep})
+		if answer == "n" {
+			break
+		}
+	}
 
 	// Log Time
 	timeNow := time.Now()
-	normalDateFormat := timeNow.Format("2006-01-02 15:04:05")
+	normalDateFormat := timeNow.Format("02-01-2006 15:04:05")
 
 	// Create Log file or check if file exists
-	fileName := "workout-log-" + timeNow.Format("20060102150405") + ".txt"
+	fileName := "workout-log-" + timeNow.Format("02-01-2006-15-04-05") + ".txt"
 	var file *os.File
 	var openError error
 	_, err := os.Stat("test.txt")
@@ -54,15 +73,21 @@ func main() {
 	}
 	defer file.Close()
 
+	totalLog := ""
+
 	// Create a buffered writer for the file
 	bufferedWriter := bufio.NewWriter(file)
-	_, err = bufferedWriter.WriteString(
-		"Log Time: " + normalDateFormat + "\n" + exercises + reps,
-	)
+	defer bufferedWriter.Flush()
+
+	totalLog += "Log Time: " + normalDateFormat + "\n\n"
+
+	for _, logItem := range inputLogs {
+		totalLog += logItem.exerciseName + " - " + logItem.reps + "\n"
+	}
+
+	_, err = bufferedWriter.WriteString(totalLog)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Flush to disk
-	bufferedWriter.Flush()
 }
