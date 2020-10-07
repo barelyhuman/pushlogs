@@ -1,6 +1,5 @@
 name: Auto Pre Release Build
-'on':
-  workflow_dispatch:
+on:
   schedule:
     - cron: 59 23 * * *
 
