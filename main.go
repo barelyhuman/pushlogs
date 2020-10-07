@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"pushlogs/lib"
 	"pushlogs/models"
-	"pushlogs/utils"
 	"strings"
 	"time"
 )
@@ -17,7 +17,7 @@ func main() {
 	var inputLogs []models.PushLog
 
 	// Base Directory Creation
-	baseDir := filepath.Join(utils.UserHomeDir(), "pushlogs")
+	baseDir := filepath.Join(lib.UserHomeDir(), "pushlogs")
 	_ = os.MkdirAll(baseDir, os.ModePerm)
 
 	// Reader for Inputs
