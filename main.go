@@ -6,32 +6,18 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
+	"pushlogs/models"
+	"pushlogs/utils"
 	"strings"
 	"time"
 )
 
-type pushLog struct {
-	exerciseName string
-	reps         string
-}
-
-func userHomeDir() string {
-	env := "HOME"
-	if runtime.GOOS == "windows" {
-		env = "USERPROFILE"
-	} else if runtime.GOOS == "plan9" {
-		env = "home"
-	}
-	return os.Getenv(env)
-}
-
 func main() {
 
-	var inputLogs []pushLog
+	var inputLogs []models.PushLog
 
 	// Base Directory Creation
-	baseDir := filepath.Join(userHomeDir(), "pushlogs")
+	baseDir := filepath.Join(utils.UserHomeDir(), "pushlogs")
 	_ = os.MkdirAll(baseDir, os.ModePerm)
 
 	// Reader for Inputs
@@ -46,7 +32,7 @@ func main() {
 		fmt.Print("Add More?(n for no, anything else for yes): ")
 		answer, _ := reader.ReadString('\n')
 		answer = strings.TrimSuffix(answer, "\n")
-		inputLogs = append(inputLogs, pushLog{exerciseName: exercise, reps: rep})
+		inputLogs = append(inputLogs, models.PushLog{ExerciseName: exercise, Reps: rep})
 		if answer == "n" {
 			break
 		}
@@ -82,7 +68,7 @@ func main() {
 	totalLog += "Log Time: " + normalDateFormat + "\n\n"
 
 	for _, logItem := range inputLogs {
-		totalLog += logItem.exerciseName + " - " + logItem.reps + "\n"
+		totalLog += logItem.ExerciseName + " - " + logItem.Reps + "\n"
 	}
 
 	_, err = bufferedWriter.WriteString(totalLog)
