@@ -24,16 +24,9 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Print("Enter Exercises: ")
-		exercise, _ := reader.ReadString('\n')
-		exercise = strings.TrimSuffix(exercise, "\n")
-		fmt.Print("Enter Reps: ")
-		rep, _ := reader.ReadString('\n')
-		fmt.Print("Add More? (n for no, anything else for yes): ")
-		answer, _ := reader.ReadString('\n')
-		answer = strings.TrimSuffix(answer, "\n")
-		inputLogs = append(inputLogs, models.PushLog{ExerciseName: exercise, Reps: rep})
-		if answer == "n" {
+		pushLog, isBreak := askQuestion(reader)
+		inputLogs = append(inputLogs, pushLog)
+		if isBreak {
 			break
 		}
 	}
@@ -76,4 +69,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func askQuestion(reader *bufio.Reader) (models.PushLog, bool) {
+	isBreak := false
+	fmt.Print("Enter Exercises: ")
+	exercise, _ := reader.ReadString('\n')
+	exercise = strings.TrimSuffix(exercise, "\n")
+	fmt.Print("Enter Reps: ")
+	rep, _ := reader.ReadString('\n')
+	fmt.Print("Add More? (n for no, anything else for yes): ")
+	answer, _ := reader.ReadString('\n')
+	answer = strings.TrimSuffix(answer, "\n")
+	if answer == "n" {
+		isBreak = true
+	}
+	return models.PushLog{ExerciseName: exercise, Reps: rep}, isBreak
 }
