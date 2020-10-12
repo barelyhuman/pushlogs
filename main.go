@@ -29,7 +29,7 @@ func main() {
 		exercise = strings.TrimSuffix(exercise, "\n")
 		fmt.Print("Enter Reps: ")
 		rep, _ := reader.ReadString('\n')
-		fmt.Print("Add More?(n for no, anything else for yes): ")
+		fmt.Print("Add More? (n for no, anything else for yes): ")
 		answer, _ := reader.ReadString('\n')
 		answer = strings.TrimSuffix(answer, "\n")
 		inputLogs = append(inputLogs, models.PushLog{ExerciseName: exercise, Reps: rep})
