@@ -2,22 +2,25 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"pushlogs/lib"
 	"pushlogs/models"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func main() {
-
 	var inputLogs []models.PushLog
+	dir := flag.String("d", filepath.Join(lib.UserHomeDir(), "pushlogs"), "Directory to save pushlogs too.")
 
+	flag.Parse()
 	// Base Directory Creation
-	baseDir := filepath.Join(lib.UserHomeDir(), "pushlogs")
+	baseDir := *dir
 	_ = os.MkdirAll(baseDir, os.ModePerm)
 
 	// Reader for Inputs
@@ -61,7 +64,12 @@ func main() {
 	totalLog += "Log Time: " + normalDateFormat + "\n\n"
 
 	for _, logItem := range inputLogs {
-		totalLog += logItem.ExerciseName + " - " + logItem.Reps + "\n"
+		totalLog += logItem.ExerciseName
+
+		for _, set := range logItem.Sets {
+			totalLog += " - " + set
+		}
+
 	}
 
 	_, err = bufferedWriter.WriteString(totalLog)
@@ -75,14 +83,26 @@ func askQuestion(reader *bufio.Reader) (models.PushLog, bool) {
 	isBreak := false
 	fmt.Print("Enter Exercises: ")
 	exercise, _ := reader.ReadString('\n')
-	exercise = strings.TrimSuffix(exercise, "\n")
-	fmt.Print("Enter Reps: ")
-	rep, _ := reader.ReadString('\n')
+	pushLog := setsLoop(reader, exercise)
 	fmt.Print("Add More? (n for no, anything else for yes): ")
 	answer, _ := reader.ReadString('\n')
 	answer = strings.TrimSuffix(answer, "\n")
 	if answer == "n" {
 		isBreak = true
 	}
-	return models.PushLog{ExerciseName: exercise, Reps: rep}, isBreak
+	return pushLog, isBreak
+}
+
+func setsLoop(reader *bufio.Reader, exerciseName string) models.PushLog {
+	fmt.Print("Enter Number of Sets: ")
+	noOfSets, _ := reader.ReadString('\n')
+	noOfSets = strings.TrimSuffix(noOfSets, "\n")
+	newPushLog := models.PushLog{ExerciseName: exerciseName}
+	noOfSetsAsInt, _ := strconv.Atoi(noOfSets)
+	for i := 0; i < noOfSetsAsInt; i++ {
+		fmt.Print("Enter Reps: ")
+		rep, _ := reader.ReadString('\n')
+		newPushLog.Sets = append(newPushLog.Sets, rep)
+	}
+	return newPushLog
 }
