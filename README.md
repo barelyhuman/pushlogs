@@ -38,6 +38,19 @@ pushlogs
 pushlogs -d ./workout-logs
 ```
 
+### Example Log
+```
+Log Time: 19-10-2020 13:10:53
+
+Pull Ups
+ - 6
+ - 2
+Push Ups
+ - 15
+ - 10
+
+```
+
 
 ### Contribution
 
