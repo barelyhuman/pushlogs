@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"pushlogs/lib"
 	"pushlogs/models"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -65,25 +64,27 @@ func main() {
 
 	for _, logItem := range inputLogs {
 		totalLog += logItem.ExerciseName
-
 		for _, set := range logItem.Sets {
 			totalLog += " - " + set
 		}
-
 	}
 
 	_, err = bufferedWriter.WriteString(totalLog)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func askQuestion(reader *bufio.Reader) (models.PushLog, bool) {
 	isBreak := false
-	fmt.Print("Enter Exercises: ")
-	exercise, _ := reader.ReadString('\n')
-	pushLog := setsLoop(reader, exercise)
+	pushLog := models.PushLog{}
+	err := pushLog.AddExercise(reader)
+	for err != nil {
+		fmt.Println(err)
+		fmt.Println()
+		err = pushLog.AddExercise(reader)
+	}
+	pushLog.AddSets(reader)
 	fmt.Print("Add More? (n for no, anything else for yes): ")
 	answer, _ := reader.ReadString('\n')
 	answer = strings.TrimSuffix(answer, "\n")
@@ -91,18 +92,4 @@ func askQuestion(reader *bufio.Reader) (models.PushLog, bool) {
 		isBreak = true
 	}
 	return pushLog, isBreak
-}
-
-func setsLoop(reader *bufio.Reader, exerciseName string) models.PushLog {
-	fmt.Print("Enter Number of Sets: ")
-	noOfSets, _ := reader.ReadString('\n')
-	noOfSets = strings.TrimSuffix(noOfSets, "\n")
-	newPushLog := models.PushLog{ExerciseName: exerciseName}
-	noOfSetsAsInt, _ := strconv.Atoi(noOfSets)
-	for i := 0; i < noOfSetsAsInt; i++ {
-		fmt.Print("Enter Reps: ")
-		rep, _ := reader.ReadString('\n')
-		newPushLog.Sets = append(newPushLog.Sets, rep)
-	}
-	return newPushLog
 }
